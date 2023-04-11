@@ -19,15 +19,13 @@ def on_message(client, userdata, msg):
     command=msg.payload.decode()
     print(command)
     dict_entry = json.loads(command)
-    if os.path.exists(dict_entry['file_path']) and ip_address == dict_entry['ip_address']:
+    if os.path.exists(dict_entry['file_path']) and ip_address == dict_entry['client_ip']:
         os.remove(dict_entry['file_path'])
 
 class FilleDetector(FileSystemEventHandler):
     def on_created(self, event):
         if (event.is_directory == False):
-            print("=================================")
             print(event.src_path, "New file Detected")
-            print("malware checking...")
             full_path = os.path.abspath(event.src_path)
             md5_returned = hashlib.md5()
             with open(event.src_path, 'rb') as f:
