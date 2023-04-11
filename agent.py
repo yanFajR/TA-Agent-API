@@ -8,14 +8,14 @@ import paho.mqtt.client as mqtt
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
-def on_subscribe(mid, granted_qos):
+def on_subscribe(client, userdata, mid, granted_qos):
     print("Subscribed: "+str(mid)+" "+str(granted_qos))
     
-def on_connect(client, rc):
+def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
     client.subscribe("NeedDeleteFile")
     
-def on_message(msg):
+def on_message(client, userdata, msg):
     command=msg.payload.decode()
     print(command)
     dict_entry = json.loads(command)
@@ -65,22 +65,27 @@ class FilleDetector(FileSystemEventHandler):
 
 if __name__ == "__main__":
     ip_address = socket.gethostbyname(socket.gethostname())
-    client = mqtt.Client("RY-AG")
+    client = mqtt.Client("AG")
     # client.username_pw_set("cedalo", "l3n2F8XBEl")
     client.connect("103.59.95.89", 1883)
+    client.on_connect = on_connect
+    client.on_subscribe = on_subscribe
+    client.on_message = on_message
     path = sys.argv[1] if len(sys.argv) > 1 else '.'
     event_handler = FilleDetector()
     observer = Observer()
     observer.schedule(event_handler, path, recursive=True)
     print("Monitoring file dimulai....")
+    
     observer.start()
-    client.on_connect = on_connect
-    client.on_subscribe = on_subscribe
-    client.on_message = on_message
+    client.loop_start()
     try:
         while True:
             time.sleep(1)
 
-    finally:
+    except KeyboardInterrupt:
         observer.stop()
-        observer.join()
+        
+    observer.join()
+    client.loop_stop()
+    client.disconnect()
