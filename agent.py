@@ -24,14 +24,25 @@ def on_message(client, userdata, msg):
             print(command)
             dict_entry = json.loads(command)
             if os.path.exists(dict_entry['file_path']) and ip_address == dict_entry['client_ip']:
+                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                server_address = ('103.59.95.89', 5000)
+                
                 with open(dict_entry['file_path'], 'rb') as f:
-                # Read the contents of the file
                     file_contents = f.read()
                 
                 sock.connect(server_address)
                 serialized_contents = pickle.dumps(file_contents)
                 sock.sendall(serialized_contents)
                 sock.close()
+        except Exception as e:
+            print("Error", e)
+    elif msg.topic == "ScanResult":
+        try:
+            command=msg.payload.decode()
+            print(command)
+            dict_entry = json.loads(command)
+            if os.path.exists(dict_entry['file_path']) and ip_address == dict_entry['client_ip']:
+                os.remove(dict_entry['file_path'])
         except Exception as e:
             print("Error", e)
 
@@ -75,8 +86,6 @@ class FilleDetector(FileSystemEventHandler):
             print(string_payload)
 
 if __name__ == "__main__":
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_address = ('103.59.95.89', 5000)
     ip_address = socket.gethostbyname(socket.gethostname())
     client = mqtt.Client("AG")
     # client.username_pw_set("cedalo", "l3n2F8XBEl")
