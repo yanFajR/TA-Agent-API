@@ -76,7 +76,7 @@ class FilleDetector(FileSystemEventHandler):
 
 if __name__ == "__main__":
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_address = ('103.59.95.89', 10000)
+    server_address = ('103.59.95.89', 5000)
     ip_address = socket.gethostbyname(socket.gethostname())
     client = mqtt.Client("AG")
     # client.username_pw_set("cedalo", "l3n2F8XBEl")
