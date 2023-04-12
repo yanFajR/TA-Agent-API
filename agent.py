@@ -22,6 +22,7 @@ def on_message(client, userdata, msg):
     print(command)
     dict_entry = json.loads(command)
     if msg.topic == "ScanRequest":
+        print("=== scanning to server ===")
         try:
             if os.path.exists(dict_entry['file_path']) and ip_address == dict_entry['client_ip']:
                 with open(dict_entry['file_path'], 'rb') as f:
@@ -39,6 +40,7 @@ def on_message(client, userdata, msg):
         except Exception as e:
             print("Error", e)
     elif msg.topic == "ScanResult":
+        print("=== answer from server ===")
         try:
             if os.path.exists(dict_entry['file_path']) and ip_address == dict_entry['client_ip']:
                 os.remove(dict_entry['file_path'])
@@ -108,5 +110,5 @@ if __name__ == "__main__":
         observer.stop()
         
     observer.join()
-    # time.sleep(10)
+    time.sleep(10)
     client.disconnect()
