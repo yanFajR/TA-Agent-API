@@ -108,5 +108,5 @@ if __name__ == "__main__":
         observer.stop()
         
     observer.join()
-    time.sleep(10)
+    # time.sleep(10)
     client.disconnect()
