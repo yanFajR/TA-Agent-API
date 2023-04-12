@@ -24,13 +24,15 @@ def on_message(client, userdata, msg):
     if msg.topic == "ScanRequest":
         try:
             if os.path.exists(dict_entry['file_path']) and ip_address == dict_entry['client_ip']:
-                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                server_address = ('103.59.95.89', 5000)
-                
                 with open(dict_entry['file_path'], 'rb') as f:
                     file_contents = f.read()
+                    
+                print("file readed")
                 
+                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                server_address = ('103.59.95.89', 5000)
                 sock.connect(server_address)
+                print("connected to server")
                 serialized_contents = pickle.dumps(file_contents)
                 sock.sendall(serialized_contents)
                 sock.close()
