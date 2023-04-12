@@ -18,11 +18,11 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe("ScanResult")
     
 def on_message(client, userdata, msg):
+    command=msg.payload.decode()
+    print(command)
+    dict_entry = json.loads(command)
     if msg.topic == "ScanRequest":
         try:
-            command=msg.payload.decode()
-            print(command)
-            dict_entry = json.loads(command)
             if os.path.exists(dict_entry['file_path']) and ip_address == dict_entry['client_ip']:
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 server_address = ('103.59.95.89', 5000)
@@ -38,9 +38,6 @@ def on_message(client, userdata, msg):
             print("Error", e)
     elif msg.topic == "ScanResult":
         try:
-            command=msg.payload.decode()
-            print(command)
-            dict_entry = json.loads(command)
             if os.path.exists(dict_entry['file_path']) and ip_address == dict_entry['client_ip']:
                 os.remove(dict_entry['file_path'])
         except Exception as e:
