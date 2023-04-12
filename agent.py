@@ -99,7 +99,7 @@ if __name__ == "__main__":
     print("Monitoring file dimulai....")
     
     observer.start()
-    client.loop_start()
+    client.loop_forever()
     try:
         while True:
             time.sleep(1)
@@ -108,5 +108,5 @@ if __name__ == "__main__":
         observer.stop()
         
     observer.join()
-    client.loop_stop()
+    time.sleep(10)
     client.disconnect()
