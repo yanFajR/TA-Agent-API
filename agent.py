@@ -98,16 +98,15 @@ if __name__ == "__main__":
     observer = Observer()
     observer.schedule(event_handler, path, recursive=True)
     print("Monitoring file dimulai....")
-    
+
     try:
-        client.loop_start()
         observer.start()
+        client.loop_start()
         while True:
             time.sleep(1)
     except KeyboardInterrupt:
         observer.stop()
         client.loop_stop()
-    
     finally:
         observer.join()
         client.disconnect()
