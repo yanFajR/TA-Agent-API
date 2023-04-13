@@ -14,8 +14,8 @@ def on_subscribe(client, userdata, mid, granted_qos):
     
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
-    client.subscribe("ScanRequest", qos=1)
-    client.subscribe("ScanResult", qos=1)
+    client.subscribe("ScanRequest", qos=2)
+    client.subscribe("ScanResult", qos=2)
     
 def on_message(client, userdata, msg):
     command=msg.payload.decode()
