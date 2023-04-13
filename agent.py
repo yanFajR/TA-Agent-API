@@ -93,6 +93,7 @@ if __name__ == "__main__":
     client.on_connect = on_connect
     client.on_subscribe = on_subscribe
     client.on_message = on_message
+    client.loop_start()
     path = sys.argv[1] if len(sys.argv) > 1 else '.'
     event_handler = FilleDetector()
     observer = Observer()
@@ -101,7 +102,6 @@ if __name__ == "__main__":
 
     try:
         observer.start()
-        client.loop_start()
         while True:
             time.sleep(1)
     except KeyboardInterrupt:
