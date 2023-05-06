@@ -99,6 +99,11 @@ if __name__ == "__main__":
     observer = Observer()
     observer.schedule(event_handler, path, recursive=True)
     print("Monitoring file dimulai....")
+    online_payload = { 
+                'client_ip': ip_address,
+                }
+    string_online_payload = json.dumps(online_payload)
+    client.publish("online", string_online_payload)
 
     try:
         observer.start()
