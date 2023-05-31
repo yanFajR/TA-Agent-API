@@ -21,7 +21,7 @@ def on_message(client, userdata, msg):
     command=msg.payload.decode()
     if msg.topic == "ScanRequest":
         try:
-            dict_entry = json.loads(command)
+            dict_entry = json.loads(command) 
             if os.path.exists(dict_entry['file_path']) and ip_address == dict_entry['client_ip']:
                 try:
                     print(dict_entry)
