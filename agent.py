@@ -11,7 +11,7 @@ from watchdog.events import FileSystemEventHandler
 
 def on_subscribe(client, userdata, mid, granted_qos):
     print("Subscribed: "+str(mid)+" "+str(granted_qos))
-    
+
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
     client.subscribe("ScanRequest", qos=1)
@@ -24,7 +24,8 @@ def on_message(client, userdata, msg):
             dict_entry = json.loads(command)
             if os.path.exists(dict_entry['file_path']) and ip_address == dict_entry['client_ip']:
                 try:
-                    print("=== scanning to server ===")
+                    print(dict_entry)
+                    print("=== scan to server ===")
                     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                     server_address = ('103.59.95.89', 5000)
                     sock.connect(server_address)
@@ -94,6 +95,7 @@ def calculate_hash(file_path):
 
 if __name__ == "__main__":
     ip_address = socket.gethostbyname(socket.gethostname())
+    print(f"IP ADDRESS: {ip_address}")
     client = mqtt.Client("Agent")
     # client.username_pw_set("cedalo", "l3n2F8XBEl")
     client.connect("103.59.95.89", 1883)
