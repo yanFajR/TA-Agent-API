@@ -2,12 +2,14 @@ import sys
 import os
 import time
 import hashlib
-import socket
-import pickle
 import json
 import paho.mqtt.client as mqtt
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
+import socket
+import requests
+
+url = "http://103.59.95.89:5000/upload"
 
 def on_subscribe(client, userdata, mid, granted_qos):
     print("Subscribed: "+str(mid)+" "+str(granted_qos))
@@ -22,21 +24,24 @@ def on_message(client, userdata, msg):
     if msg.topic == "ScanRequest":
         try:
             dict_entry = json.loads(command)
-            print(dict_entry)
             if os.path.exists(dict_entry['file_path']) and ip_address == dict_entry['client_ip']:
                 try:
                     print(dict_entry)
                     print("=== scan to server ===")
-                    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                    server_address = ('103.59.95.89', 5000)
-                    sock.connect(server_address)
-                    print("connected to server")
-                    with open(dict_entry['file_path'], 'rb') as f:
-                        file_contents = f.read()
-                    print("file readed")
-                    serialized_contents = pickle.dumps(file_contents)
-                    sock.sendall(serialized_contents)
-                    sock.close()
+                    files = {"file": open(dict_entry['file_path'], 'rb')}
+                    data = {
+                        "client_ip": dict_entry['client_ip'],
+                        "file_path": dict_entry['file_path']
+                    }
+                    
+                    # Send the request
+                    response = requests.post(url, files=files, data=data)
+                    
+                    if response.status_code == 200:
+                        print('File uploaded successfully.')
+                    else:
+                        print('Upload failed with status code:', response.status_code)
+                        print('Error message:', response.text)
                 except Exception as e:
                     print("Error", e)
         except Exception as e:
