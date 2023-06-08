@@ -6,6 +6,7 @@ import json
 import paho.mqtt.client as mqtt
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
+import datetime
 import socket
 import requests
 
@@ -26,8 +27,8 @@ def on_message(client, userdata, msg):
             dict_entry = json.loads(command)
             if os.path.exists(dict_entry['file_path']) and ip_address == dict_entry['client_ip']:
                 try:
-                    print(dict_entry)
-                    print("=== scan to server ===")
+                    now = datetime.datetime.utcnow()
+                    print(f'{now.strftime("%Y-%m-%dT%H:%M:%S.%fZ")} : SUSPECTED FILE {dict_entry["file_path"]} => SCAN TO SERVER')
                     files = {"file": open(dict_entry['file_path'], 'rb')}
                     data = {
                         "client_ip": dict_entry['client_ip'],
@@ -44,6 +45,15 @@ def on_message(client, userdata, msg):
                         print('Error message:', response.text)
                 except Exception as e:
                     print("Error", e)
+            elif os.path.exists(dict_entry['file_path']) == False and ip_address == dict_entry['client_ip']:
+                result = { 
+                    'client_ip': ip_address,
+                    'file_path': dict_entry['file_path'],
+                    }
+                string_payload = json.dumps(result)
+                client.publish("DeletedFile", string_payload)
+                print(string_payload)
+                
         except Exception as e:
             print("Error", e)
     elif msg.topic == "ScanResult":
